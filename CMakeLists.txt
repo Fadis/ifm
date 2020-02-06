@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 2.8)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+PROJECT(inversed_fm)
+include(CheckIncludeFiles)
+include(CheckCXXSourceCompiles)
+find_package(PkgConfig)
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
+find_package(Boost 1.65.0 COMPONENTS program_options system REQUIRED )
+pkg_check_modules(FFTW REQUIRED fftw3f)
+pkg_check_modules(SNDFILE REQUIRED sndfile)
+find_package(Threads REQUIRED)
+find_package(OpenImageIO REQUIRED)
+find_package(OpenMP REQUIRED)
+find_package(JSON REQUIRED)
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include ${Boost_INCLUDE_DIRS}
+  ${FFTW_INCLUDE_DIRS} ${OIIO_INCLUDE_DIR} ${JSON_INCLUDE_DIR}
+  ${SNDFILE_INCLUDE_DIR} )
+set(CMAKE_CXX_FLAGS_DEBUG "-g -std=c++2a -Wall -Wextra -Werror ${OpenMP_CXX_FLAGS}")
+set(CMAKE_C_FLAGS_DEBUG "-g -Wall -Wextra -Werror ${OpenMP_C_FLAGS}")
+set(CMAKE_CXX_FLAGS_RELEASE "-march=native -O2 -std=c++2a -Wall -Wextra -Werror ${OpenMP_CXX_FLAGS}")
+set(CMAKE_C_FLAGS_RELEASE "-march=native -O2 -Wall -Wextra -Werror ${OpenMP_C_FLAGS}")
+subdirs( include src )
+

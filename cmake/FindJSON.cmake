@@ -1,0 +1,13 @@
+if(NOT JSON_ROOT)
+  find_path(JSON_INCLUDE_DIRS nlohmann/json.hpp)
+else()
+  find_path(JSON_INCLUDE_DIRS nlohmann/json.hpp NO_DEFAULT_PATH PATHS ${JSON_ROOT})
+endif()
+if(JSON_INCLUDE_DIRS)
+  set(JSON_FOUND TRUE)
+else()
+  set(JSON_FOUND FALSE)
+  set(JSON_INCLUDE_DIR)
+endif()
+mark_as_advanced(JSON_INCLUDE_DIRS)
+
