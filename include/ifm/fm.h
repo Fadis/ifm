@@ -125,8 +125,8 @@ namespace ifm {
       const envelope_params_t< U > &params,
       note_number_t note
     ) {
-      auto l = params.lower_bound( note );
       auto h = params.upper_bound( note );
+      auto l = h == params.begin() ? h : std::prev( h );
       if( l == params.end() ) l = std::prev( params.end() );
       if( h == params.end() ) h = l;
       config = interpolate< T >( l->second, h->second, l == h ? T( 0 ) : T( note - l->first )/T( h->first - l->first ) );
@@ -432,8 +432,8 @@ namespace ifm {
       const weight_params_t< U, n > &params,
       note_number_t note
     ) {
-      auto l = params.lower_bound( note );
       auto h = params.upper_bound( note );
+      auto l = h == params.begin() ? h : std::prev( h );
       if( l == params.end() ) l = std::prev( params.end() );
       if( h == params.end() ) h = l;
       config = interpolate< T >( l->second, h->second, l == h ? T( 0 ) : T( note - l->first )/T( h->first - l->first ) );
@@ -565,7 +565,7 @@ namespace ifm {
       std::fill( dest, dest + synth_block_size, 0 );
       for( auto &v: channels ) {
         v( b.data() );
-        for( unsigned int i = 0; i != synth_block_size; ++i ) dest[ i ] += b[ i ] * 0.25f;
+        for( unsigned int i = 0; i != synth_block_size; ++i ) dest[ i ] += b[ i ] * 0.125f;
       }
       std::array< U, synth_block_size > s;
       auto initial_scale = scale;

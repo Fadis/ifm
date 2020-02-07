@@ -29,7 +29,7 @@ namespace ifm {
   std::tuple< float, float >
   exp_match( const float *expected, unsigned int size, float dt );
   struct exp_envelope_params_t {
-    exp_envelope_params_t() : attack_a( 0 ), attack_b( 0 ), decay_a( 0 ), decay_b( 0 ), highest( 0 ) {}
+    exp_envelope_params_t() : attack_a( 0 ), attack_b( 0 ), decay_a( 0 ), decay_b( 0 ), highest( 0 ), highest_level( 0 ) {}
     IFM_SET_SMALL_VALUE( attack_a )
     IFM_SET_SMALL_VALUE( attack_b )
     IFM_SET_SMALL_VALUE( decay_a )

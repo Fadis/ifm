@@ -49,7 +49,8 @@ int main( int argc, char *argv[] ) {
     ("input,i", boost::program_options::value<std::string>(), "入力ファイル")
     ("resolution,r", boost::program_options::value<int>()->default_value(13),  "分解能")
     ("damped,d", boost::program_options::value<bool>()->default_value(false),  "減衰振動")
-    ("note,n", boost::program_options::value<int>()->default_value(60), "音階");
+    ("note,n", boost::program_options::value<int>()->default_value(60), "音階")
+    ("verbose,v", boost::program_options::value<bool>()->default_value(false), "詳細を表示");
   boost::program_options::variables_map params;
   boost::program_options::store( boost::program_options::parse_command_line( argc, argv, options ), params );
   boost::program_options::notify( params );
@@ -103,7 +104,6 @@ int main( int argc, char *argv[] ) {
   std::cout << "modulator scale: " << b << std::endl;
   std::cout << "loss: " << l << std::endl;
   const auto n = ifm::generate_n( freq );
-//#pragma omp parallel for
   float current_b = b;
   for( unsigned int y = highest + 1; y < em.size(); ++y ) {
     auto [l,b_] = ifm::find_b_2op( harm.data() + y * harms, pre, freq, current_b, n );
@@ -111,7 +111,6 @@ int main( int argc, char *argv[] ) {
     current_b = std::min( b_, current_b );
     loss[ y ] = l;
   }
-//#pragma omp parallel for
   current_b = b;
   for( unsigned int y = highest; y > 0; --y ) {
     auto [l,b_] = ifm::find_b_2op( harm.data() + ( y - 1 ) * harms, pre, freq, current_b, n );
@@ -119,9 +118,10 @@ int main( int argc, char *argv[] ) {
     current_b = std::min( b_, current_b );
     loss[ y ] = l;
   }
-  /*for( unsigned int y = 0; y != ec.size(); ++y ) {
-    std::cout << y * 0.01f << " " << ec[ y ]/ec[ highest ] << " " << em[ y ] << " " << loss[ y ] << std::endl;
-  }*/
+  if(  params[ "verbose" ].as< bool >() ) {
+    for( unsigned int y = 0; y != ec.size(); ++y )
+      std::cout << y * 0.01f << " " << ec[ y ]/ec[ highest ] << " " << em[ y ] << " " << loss[ y ] << std::endl;
+  }
   bool damped = params[ "damped" ].as< bool >(); 
   const auto ece = ifm::get_attack_and_decay_exp( ec.data(), ec.size(), 0.01f, damped );
   const auto eme = ifm::get_attack_and_decay_exp( em.data(), ec.size(), 0.01f, damped );
